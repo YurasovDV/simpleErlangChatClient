@@ -18,7 +18,7 @@ start_server_listener(ServerSock) ->
 event_loop(ServerSock) ->
   receive
     {tcp, _Socket, String} ->
-      io:format("~p~n", [String])
+print_message(String)
   %% TODO log
 %%   after 10000 ->
 %%     io:format("nuffin~n")
@@ -27,14 +27,32 @@ event_loop(ServerSock) ->
 
 
 connect(ServerAddress, ServerPort) ->
-  {ok, Server} = gen_tcp:connect(ServerAddress, ServerPort, [{active, true}, {nodelay, true}], 1000),
+  {ok, Server} = gen_tcp:connect(ServerAddress, ServerPort, [{active, true}, {nodelay, true}, {packet, line}], 1000),
   ok = gen_tcp:send(Server, "/login"),
+  io:format("commands: /set_nick Nick, /logout, /poll_messages~n", []),
   io:format("Login..: ", []),
-  receive
+  receive_last_messages().
+
+
+receive_last_messages() ->
+receive 
     {tcp, _Socket, String} ->
-      io:format("~p~n", [String]),
-      io:format("commands: /set_nick Nick, /logout, /poll_messages~n", []),
-      _Socket
-  after 15000 ->
-    error(timeout)
+     io:format("~p ~p ~n", ["receive_last_messages", String]),
+     {N, _} = string:to_integer(String),
+     receive_message(N),
+     _Socket
   end.
+
+receive_message(0) -> ok;
+
+receive_message(N) ->
+  io:format("waiting for message #~p ~n", [N]),
+  receive 
+    {tcp, _Socket, String} ->
+     print_message(String),
+     receive_message(N - 1)
+   after 3000 -> ok
+  end.
+
+print_message(String) ->
+   io:format("~p~n", [String]).

@@ -21,7 +21,7 @@ send_message(MessageText) ->
   WrappedResult =
     case hd(MessageText) of
     %% "/"
-      47 ->
+      $/ ->
         {IsCommand, ModifiedText} = check_if_command_and_unwrap(MessageText),
         case IsCommand of
           true ->
@@ -40,6 +40,7 @@ check_if_command_and_unwrap(MessageText) ->
     false ->
       {false, MessageText};
     true ->
+      % remove slash
       {true, string:substr(MessageText, 1)}
   end.
 
@@ -48,9 +49,9 @@ check_if_command(MessageText) ->
   Commands = ["/set_nick", "/logout", "/poll_messages"],
   Words = string:tokens(MessageText, " "),
   Any = lists:any(fun(Constant) -> string:equal(Constant, hd(Words)) end, Commands),
-  io:format("HD := ~p~n", [hd(Words)]),
-  io:format("hardcode ~p~n", [string:equal("/set_nick", hd(Words))]),
-  io:format("~p~n", [Any]),
+  %%  io:format("HD := ~p~n", [hd(Words)]),
+  %%  io:format("hardcode ~p~n", [string:equal("/set_nick", hd(Words))]),
+  %%  io:format("~p~n", [Any]),
   Any.
 
 init(ServerAdapterModule, MyPort, ServerAddress) ->
