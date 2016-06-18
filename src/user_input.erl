@@ -6,6 +6,7 @@
 
 -spec start_listen/1 :: (SendCallback) -> pid()
   when SendCallback :: fun((Message :: string()) -> ok).
+
 start_listen(SendCallback) ->
   io:format("start_listen~n", []),
   Pid = spawn_link(?MODULE, event_loop, [SendCallback]),
@@ -13,6 +14,7 @@ start_listen(SendCallback) ->
 
 -spec event_loop/1 :: (SendCallback) -> ok
   when SendCallback :: fun((Message :: string()) -> ok).
+
 event_loop(SendCallback) ->
   case io:get_line(">>") of
     "/quit" ->

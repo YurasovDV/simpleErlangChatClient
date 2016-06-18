@@ -49,9 +49,6 @@ check_if_command(MessageText) ->
   Commands = ["/set_nick", "/logout", "/poll_messages"],
   Words = string:tokens(MessageText, " "),
   Any = lists:any(fun(Constant) -> string:equal(Constant, hd(Words)) end, Commands),
-  %%  io:format("HD := ~p~n", [hd(Words)]),
-  %%  io:format("hardcode ~p~n", [string:equal("/set_nick", hd(Words))]),
-  %%  io:format("~p~n", [Any]),
   Any.
 
 init(ServerAdapterModule, MyPort, ServerAddress) ->
@@ -61,7 +58,7 @@ init(ServerAdapterModule, MyPort, ServerAddress) ->
 
   event_loop(ServerAdapterModule, ServerSocket).
 
--spec try_connect/3 :: (atom(), string(), integer()) -> ok.
+-spec try_connect/3 :: (atom(), string(), integer()) -> gen_tcp:socket().
 try_connect(ServerAdapterModule, Address, Port) ->
   apply(ServerAdapterModule, connect, [Address, Port]).
 

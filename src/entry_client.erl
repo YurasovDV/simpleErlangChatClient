@@ -4,6 +4,7 @@
 %% API
 -export([main/0]).
 
+-spec main() -> 'ok'.
 main() ->
   ok = application:load(simpleErlangChatClient),
   application:start(simpleErlangChatClient),
